@@ -1,7 +1,7 @@
 //Importaciones
 const express = require("express")
 const path = require("path")
-const ProductManager = require("./productManager.js")
+/* const ProductManager = require("./productManager.js") */
 const productsRouter = require("./routes/products.router.js")
 const cartsRouter = require("./routes/carts.router.js")
 
@@ -14,18 +14,18 @@ const PORT = 8080
 //Declaración de midlewares
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(express.static(path.join(__dirname, "public")))
+/* app.use(express.static(path.join(__dirname, "public"))) */
 
 
-const managerProduct = new ProductManager()
+/* const managerProduct = new ProductManager() */
 
 
-app.use("/", productsRouter)
-app.use("/", cartsRouter)
+app.use("/api/products", productsRouter)
+app.use("/api/carts", cartsRouter)
 
-app.get("/", (req, res)=>{
+/* app.get("/", (req, res)=>{
     res.sendFile(path.join(__dirname, "public", "index.html"))
-})
+}) */
 
 
 app.listen(PORT, () => {
