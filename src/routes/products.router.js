@@ -1,40 +1,11 @@
-/* //Importaciones
-const express = require("express")
-const router = express.Router()
-
-const products = []
-
-router.get("/products", (req, res)=>{
-    res.json(products)
-})
-
-router.post("/products", (req, res)=>{
-    const newProduct = req.body
-    products.push(newProduct)
-    res.json({message: "Producto agregado"})
-})
-
-module.exports = router */
-///////////////////////////////////////ACA
-
-
-
 //Importaciones
-const { Router } = require('express')
+import { Router } from 'express'
 const productsRouter = Router()
-/* const fs = require ('fs') */
-const ProductManager = require('../productManager')
+import ProductManager from '../productManager'
 
 
 //Instanciando clase ProductManager
 const managerProduct = new ProductManager()
-
-
-//Probando Middleware
-/* productsRouter.use((req,res,next) =>{
-  console.log('Middleware en productsRouter')
-  return next()
-}) */
 
 
 //Ruta de endpoint para obtener el listado de productos con o sin límite
@@ -89,15 +60,6 @@ productsRouter.post('/', async (req, res) => {
   }
 });
 
-/* productsRouter.post('/', async (req, res) => {
-  const { title, description, code, price, status, stock, category, thumbnail } = req.body;
-  if (!title || !description || !code || !price || !status || !stock || !category || !thumbnail) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-  }
-  managerProduct.addProduct(title, description, code, price, status, stock, category, thumbnail);
-  res.status(200).json({ message: 'Producto agregado exitosamente' });
-}); */
-
 
 //Ruta de endpoint para actualizar un producto especificado del listado de productos
 productsRouter.put('/:pid', async (req, res) => {
@@ -132,5 +94,4 @@ productsRouter.delete('/:pid', async (req, res) => {
   return res.status(204).json({})
 })
 
-
-module.exports = productsRouter
+export default productsRouter;

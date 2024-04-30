@@ -1,5 +1,5 @@
 //Importaciones
-const fs = require('fs').promises
+import { promises as fs } from 'fs'
 
 
 //Contruyendo la clase y los métodos utilizables para los productos
@@ -60,24 +60,6 @@ class ProductManager {
       console.error('Error al escribir en el archivo:', error);
     }
   }
-/* writeProductsToFile() {
-    fs.promises.readFile(this.path, 'utf-8')
-      .then((data) => {
-        const products = JSON.parse(data)
-        if (!products.length) {
-          this.productIdCounter+1
-        } else {
-          products.push(...this.products)
-        }
-        return fs.promises.writeFile(this.path, JSON.stringify(products, null, 2))
-      })
-      .then(() => {
-        console.log('Productos escritos en el archivo correctamente')
-      })
-      .catch((err) => {
-        console.error('Error al escribir en el archivo:', err)
-      });
-  } */
 
 
   //Metodo para obtener el listado de productos en products.json
@@ -92,19 +74,6 @@ class ProductManager {
       throw error
     }
   }
-  /*   async getProductById(id) {
-    try {
-      const data = await fs.readFile(this.path, 'utf-8')
-      const productsJson = JSON.parse(data)
-      const product = productsJson.find((product) => product.id === id)
-      
-      console.log('Producto en getProductsById encontrado:', product)
-      return product
-    } catch (error) {
-      console.log('ERROR: Archivo en getProductsById no leído')
-      throw error
-    }
-  } */
 
 
   //Metodo para obtener un producto especifico del listado de productos en products.json
@@ -152,30 +121,6 @@ class ProductManager {
       return error;
     }
   }
-  /* updateProduct(id, updatedFields) {
-    fs.readFile(this.path, 'utf-8')
-      .then((data) => {
-        const productsJson = JSON.parse(data)
-        const productIndex = productsJson.findIndex((product) => product.id === id)
-  
-        if (productIndex === -1) {
-          const error = 'Producto para actualizar no encontrado'
-          console.log(error)
-          return error
-        }
-        const updatedProduct = { ...productsJson[productIndex], ...updatedFields }
-        productsJson[productIndex] = updatedProduct
-        return this.saveProducts(productsJson)
-      })
-      .then(() => {
-        console.log('Producto actualizado con éxito')
-        return 
-      })
-      .catch((error) => {
-        console.log('ERROR: No se pudo actualizar el producto')
-        return error;
-      });
-  } */
   
 
   //Metodo para guardar productos en el listado de productos en products.json
@@ -210,31 +155,6 @@ class ProductManager {
       throw error;
     }
   }
-  /* deleteProduct(id) {
-    fs.readFile(this.path, 'utf-8')
-      .then((data) => {
-        const productsJson = JSON.parse(data);
-        const productIndex = productsJson.findIndex((product) => product.id === id)
-  
-        if (productIndex === -1) {
-          const error = 'Producto a eliminar no encontrado'
-          console.log(error)
-          return error
-        }
-  
-        const deleteProduct = productsJson.splice(productIndex, 1)
-  
-        return fs.writeFile(this.path, JSON.stringify(productsJson, null, 2)) , deleteProduct
-      })
-      .then((deleteProduct) => {
-        console.log('Producto eliminado con éxito')
-        console.log(deleteProduct)
-      })
-      .catch((error) => {
-        console.log('ERROR: No se pudo eliminar el producto')
-        return error
-      });
-  } */
 }
-/* const manager = new ProductManager() */
-module.exports = ProductManager
+
+export default ProductManager;

@@ -1,9 +1,8 @@
 //Importaciones
-const express = require("express")
-const path = require("path")
-/* const ProductManager = require("./productManager.js") */
-const productsRouter = require("./routes/products.router.js")
-const cartsRouter = require("./routes/carts.router.js")
+import express, { urlencoded, json } from "express"
+import path from "path"
+import productsRouter from "./routes/products.router.js"
+import cartsRouter from "./routes/carts.router.js"
 
 
 //Configuración del server
@@ -11,21 +10,25 @@ const app = express()
 const PORT = 8080
 
 
+
 //Declaración de midlewares
+app.engine('handlebars', handlebars.engine())
+app.set('views', __dirname + '/views')
+app.set('view engine', 'handlebars')
+app.use(express.static(__dirname + '/public'))
+
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 /* app.use(express.static(path.join(__dirname, "public"))) */
 
 
-/* const managerProduct = new ProductManager() */
 
-
+//Declaración de endpoints
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartsRouter)
 
-/* app.get("/", (req, res)=>{
-    res.sendFile(path.join(__dirname, "public", "index.html"))
-}) */
+
+
 
 
 app.listen(PORT, () => {

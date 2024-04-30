@@ -1,5 +1,5 @@
 //Importaciones
-const fs = require('fs').promises
+import { promises as fs } from 'fs'
 
 
 //Contruyendo la clase y los métodos utilizables para los carritos
@@ -11,7 +11,7 @@ class CartManager {
   }
 
 
-//Metdo para agregar carrito con propiedades específicas
+  //Metdo para agregar carrito con propiedades específicas
   async createCart() {
     const carts = await this.getCarts()
     const cart = {
@@ -24,7 +24,7 @@ class CartManager {
     return cart
   }
 
-
+  
   //Metodo para leer y agregar carritos al archivo carts.json
   async jsonWriteCarts() {
     try {
@@ -34,18 +34,9 @@ class CartManager {
         console.log('writeCartsToFile error:', error);
     }
   }
-  /* jsonWriteCarts() {
-    fs.writeFile(this.path, JSON.stringify(this.carts, null, 2))
-    .then(() => {
-      console.log('(MG) Carrito creado con éxito');
-    })
-    .catch((err) => {
-      console.log('writeCartsToFile error:', err);
-    });
-  } */
-
-
-//Creo metodo getCarts
+  
+  
+  //Creo metodo getCarts
   async getCarts() {
     try {
       const data = await fs.readFile(this.path, 'utf-8')
@@ -80,5 +71,4 @@ class CartManager {
   }
 }
 
-/* const manager = new CartManager() */
-module.exports = CartManager
+export default CartManager;

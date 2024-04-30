@@ -1,40 +1,12 @@
-/* //Importaciones
-/* const express = require("express")
-const router = express.Router()
-
-const carts = []
-
-router.get("/carts", (req, res)=>{
-    res.json(carts)
-})
-
-router.post("/carts", (req, res)=>{
-    const newCart = req.body
-    carts.push(newCart)
-    res.json({message: "Carrito agregado"})
-})
-
-module.exports = router */
-//////////////////////////////////////////////HOla
-
-
-
 //Importaciones
-const { Router } = require('express')
+import { Router } from 'express'
 const cartsRouter = Router()
-const fs = require('fs')
-const CartManager = require('../cartManager')
+import { promises } from 'fs'
+import CartManager from '../cartManager'
 
 
 //Instanciando clase CarttManager
 const managerCart = new CartManager()
-
-
-//Probando Middleware 
-/* cartsRouter.use((req,res,next) =>{
-  console.log('Middleware en cartsRouter')
-  return next()
-}) */
 
 
 //Metodo POST
@@ -82,7 +54,7 @@ cartsRouter.post('/:cid/product/:pid', async (req, res) => {
   }
 
   try {
-    await fs.promises.writeFile('./carts.json', JSON.stringify(carts, null, 2))
+    await promises.writeFile('./carts.json', JSON.stringify(carts, null, 2))
     console.log('Datos del carrito actualizados y guardados')
     return res.status(200).json(carts)
   } catch (error) {
@@ -91,5 +63,4 @@ cartsRouter.post('/:cid/product/:pid', async (req, res) => {
   }
 })
 
-
-module.exports = cartsRouter
+export default cartsRouter;
