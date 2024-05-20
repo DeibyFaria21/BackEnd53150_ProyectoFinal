@@ -1,7 +1,7 @@
 //Importaciones
 import { Router } from 'express'
 const productsRouter = Router()
-import ProductManager from '../productManager'
+import ProductManager from '../productManager.js'
 
 
 //Instanciando clase ProductManager
