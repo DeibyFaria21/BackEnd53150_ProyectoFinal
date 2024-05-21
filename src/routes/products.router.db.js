@@ -8,12 +8,7 @@ const productsRouterdb = Router()
 const managerProduct = new ProductManager()
 
 
-import { Router } from 'express'
-import productModel from '../dao/models/productModel.js'
-
-const router = Router()
-
-router.get('/api/products', async (req, res) => {
+productsRouterdb.get('/api/products', async (req, res) => {
     try {
         const products = await productModel.find().lean()
         res.render('home',{
@@ -26,7 +21,7 @@ router.get('/api/products', async (req, res) => {
     }
 })
 
-router.get('/api/products/:pid', async (req, res) => {
+productsRouterdb.get('/api/products/:pid', async (req, res) => {
     try {
         const product = await productModel.findById(req.params.pid).lean()
 
@@ -42,7 +37,7 @@ router.get('/api/products/:pid', async (req, res) => {
 })
 
 //Post para Postman:
-router.post('/api/products', async (req, res) => {
+productsRouterdb.post('/api/products', async (req, res) => {
     let { title, description, code, price, stock, category, thumbnail} = req.body
     console.log(req.body)
 
@@ -55,13 +50,13 @@ router.post('/api/products', async (req, res) => {
     res.send({ result: "success", payload: result })
 })
 
-router.get('/api/addProduct', (req, res) => {
+productsRouterdb.get('/api/addProduct', (req, res) => {
     res.render('addProduct',{
         style:'style.css'
     })
 })
 
-router.post('/api/addProduct', async (req, res) => {
+productsRouterdb.post('/api/addProduct', async (req, res) => {
     try {
         let { title, description, code, price, stock, category, thumbnail } = req.body
 
@@ -88,7 +83,7 @@ router.post('/api/addProduct', async (req, res) => {
 })
 
 //PUT para Postman:
-router.put('/api/products/:pid', async (req, res) => {
+productsRouterdb.put('/api/products/:pid', async (req, res) => {
     let { pid } = req.params
     let productToReplace = req.body
 
@@ -100,7 +95,7 @@ router.put('/api/products/:pid', async (req, res) => {
     res.send({ result: "success", payload: result })
 })
 
-router.get('/api/products/update/:pid', async (req, res) => {
+productsRouterdb.get('/api/products/update/:pid', async (req, res) => {
     try {
         const productById = await productModel.findByIdAndUpdate(req.params.pid).lean()
         res.render('updateProduct', { productById })
@@ -109,7 +104,7 @@ router.get('/api/products/update/:pid', async (req, res) => {
     }
 })
 
-router.post('/api/products/update/:pid', async (req, res) => {
+productsRouterdb.post('/api/products/update/:pid', async (req, res) => {
     try {
         let { pid } = req.params
         console.log('Datos recibidos para actualizar:', req.body)
@@ -122,17 +117,16 @@ router.post('/api/products/update/:pid', async (req, res) => {
 })
 
 //Delete para Postman:
-router.delete('/api/products/:pid', async (req, res) => {
+productsRouterdb.delete('/api/products/:pid', async (req, res) => {
     let { pid } = req.params
     let result = await productModel.deleteOne({ _id: pid })
     res.send({ result: "success", payload: result })
 })
 
-router.get('/api/products/delete/:pid', async (req, res) => {
+productsRouterdb.get('/api/products/delete/:pid', async (req, res) => {
     try {
         const { pid } = req.params
         await productModel.findByIdAndDelete(pid)
-        
         res.redirect('/api/products')
     } catch (error) {
         console.error('Error al eliminar el producto:', error)
