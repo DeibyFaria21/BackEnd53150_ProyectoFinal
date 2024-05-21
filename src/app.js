@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 
 
-mongoose.connect("mongodb+srv://DeibyFaria21:Simple123@cluster0.fc7im6z.mongodb.net/back53150?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("mongodb+srv://DeibyFaria21:Simple123@cluster0.fc7im6z.mongodb.net/ecomerce?retryWrites=true&w=majority&appName=Cluster0")
     .then(() => {
         console.log("Conectado a la base de datos")
     })
