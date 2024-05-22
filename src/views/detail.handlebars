@@ -1,0 +1,20 @@
+<div>
+    <h1>Detalle del Producto</h1>
+</div>
+<div>
+    <ul>
+        <li><strong>Título:</strong> {{product.title}}</li>
+        <li><strong>Descripción:</strong> {{product.description}}</li>
+        <li><strong>Código:</strong> {{product.code}}</li>
+        <li><strong>Precio:</strong> {{product.price}}</li>
+        <li><strong>Estado:</strong> {{product.status}}</li>
+        <li><strong>Stock:</strong> {{product.stock}}</li>
+        <li><strong>Categoría:</strong> {{product.category}}</li>
+        <li><strong>Thumbnail:</strong> {{product.thumbnail}}</li>
+    </ul>
+    <a href="/api/products">Volver a la lista de productos</a>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
