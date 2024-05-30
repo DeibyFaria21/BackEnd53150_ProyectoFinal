@@ -8,15 +8,87 @@ const productsRouterdb = Router()
 
 
 //Handlebars
-productsRouterdb.get('/products', async (req, res) => {
+/* productsRouterdb.get('/products', async (req, res) => {
     try {
         const products = await productModel.find().lean()
         res.render('home',{products})
-        /* res.json(products) */
     } catch (error) {
         console.error('No se encontró el archivo de productos:', error)
     }
-})
+}) */
+/* res.json(products) */
+
+productsRouterdb.get('/products', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const page = parseInt(req.query.page) || 1;
+        const query = req.query.query || '';
+        const category = req.query.category || '';
+        const sort = req.query.sort || '';
+
+        // Obtener todos los productos
+        let allProducts = await productModel.find().lean();
+
+        // Aplicar filtros y ordenamiento
+        let filteredProducts = allProducts;
+
+        // Filtro por nombre (query)
+        if (query) {
+            filteredProducts = filteredProducts.filter(product => product.name.toLowerCase().includes(query.toLowerCase()));
+        }
+
+        // Filtro por categoría
+        if (category) {
+            filteredProducts = filteredProducts.filter(product => product.category === category);
+        }
+
+        // Ordenamiento por precio
+        if (sort === 'asc') {
+            filteredProducts.sort((a, b) => a.price - b.price);
+        } else if (sort === 'desc') {
+            filteredProducts.sort((a, b) => b.price - a.price);
+        }
+
+        // Calcular paginación
+        const totalPages = Math.ceil(filteredProducts.length / limit);
+        const startIndex = (page - 1) * limit;
+        const endIndex = Math.min(startIndex + limit, filteredProducts.length);
+
+        // Obtener productos para la página actual
+        const limitedProducts = filteredProducts.slice(startIndex, endIndex);
+
+        const buildLink = (pageNum) => {
+            let link = `/api/products?page=${pageNum}&limit=${limit}`;
+            if (query) link += `&query=${query}`;
+            if (category) link += `&category=${category}`;
+            if (sort) link += `&sort=${sort}`;
+            return link;
+        };
+
+        const prevLink = page > 1 ? buildLink(page - 1) : null;
+        const nextLink = page < totalPages ? buildLink(page + 1) : null;
+
+        // Construir objeto de respuesta con información de paginación
+        const response = {
+            status: 'success',
+            payload: limitedProducts,
+            pagination: {
+                totalPages: totalPages,
+                currentPage: page,
+                hasPrevPage: page > 1,
+                hasNextPage: page < totalPages,
+                prevLink: prevLink,
+                nextLink: nextLink
+            }
+        };
+
+        res.render('home', response)
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los productos' });
+    }
+});
 
 //Handlebars
 productsRouterdb.get('/products/:pid', async (req, res) => {

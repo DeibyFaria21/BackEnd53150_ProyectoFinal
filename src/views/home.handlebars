@@ -1,10 +1,17 @@
+<div id="header">
+    <a href="/api/carts/664d73c255cc4eb27f46d21c" class="cart-text">
+      <h1>CARRITO</h1>
+    </a>
+</div>
 <div>
     <h1>Listado de productos...</h1>
 </div>
 <div>
-<ul id="products">
-    {{#each products}}
+    <ul id="products">
+        {{#each payload}}
+            <br/>
             <li>
+                <strong>Producto ID:</strong> {{this._id}}<br>
                 <strong>Título:</strong> {{this.title}}<br>
                 <strong>Descripción:</strong> {{this.description}}<br>
                 <strong>Código:</strong> {{this.code}}<br>
@@ -13,12 +20,36 @@
                 <strong>Stock:</strong> {{this.stock}}<br>
                 <strong>Categoría:</strong> {{this.category}}<br>
                 <strong>Thumbnail:</strong> {{this.thumbnail}}<br>
+                <br>
+                <form action="/api/carts/add" method="POST">
+                    <input type="hidden" name="productId" value="{{this._id}}">
+                    <label for="quantity">Cantidad:</label>
+                    <input type="number" name="quantity" value="1" min="1">
+                    <button type="submit">Agregar al carrito</button>
+                </form>
+                <br/>
+                <a href="/api/products/{{this._id}}">Ver detalles</a>
+                <br/>
+                <br/>
                 <hr>
             </li>
         {{/each}}
-</ul>
+    </ul>
+</div>
+<div>
+    {{#if pagination.hasPrevPage}}
+        <a href={{pagination.prevLink}}><< Anterior</a>
+    {{/if}}
+    &nbsp;
+    Página {{pagination.currentPage}} de {{pagination.totalPages}}
+    &nbsp;
+    {{#if pagination.hasNextPage}}
+    <a href={{pagination.nextLink}}>Siguiente >></a>
+    {{/if}}
 </div>
 
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>
+
+{{!-- http://localhost:8080/api/products?page=3&limit=3&category=tecladoMecanico&sort=desc --}}

@@ -5,7 +5,9 @@ import mongoose from "mongoose"
 import __dirname from "./utils.js"
 import handlebars from "express-handlebars"
 import { Server } from "socket.io"
+import dotenv from "dotenv"
 import path from "path"
+import methodOverride from 'method-override';
 
 import productsRouter from "./routes/products.router.js"
 import cartsRouter from "./routes/carts.router.js"
@@ -35,11 +37,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + '/public'))
 
 
-mongoose.connect("mongodb+srv://DeibyFaria21:Simple123@cluster0.fc7im6z.mongodb.net/ecomerce?retryWrites=true&w=majority&appName=Cluster0")
-    .then(() => {
-        console.log("Conectado a la base de datos")
-    })
-    .catch(error => console.error("Error en la conexión", error))
+//Middleware que permite usar el metodo DELETE /carts/ID/product/ID...
+//...en un boton dentro del handlebars de cartDetail.
+app.use(methodOverride('_method'));
 
 
 //Declaración de endpoints fs
@@ -50,6 +50,28 @@ app.use("/fs/carts", cartsRouter)
 app.use("/api", productsRouterdb)
 app.use("/api", cartsRouterdb)
 app.use("/api", messagesRouterdb)
+
+
+dotenv.config()
+console.log(process.env.MONGO_URL)
+
+
+mongoose.connect(process.env.MONGO_URL)
+    .then(() => {
+        console.log("Conectado a la base de datos")
+    })
+    .catch(error => console.error("Error en la conexión", error))
+
+
+//TESTEO DE VELOCIDAD DE RESPUESTA DE LA "DB"
+//Dentro del find se coloca un campo a buscar y un valor
+//Para que no busque en todos los campos se hace la indexación
+//En el modelo (Schema), se debe colocar otra propiedad "index: true"
+/* const enviroment = async () => {
+    await mongoose.connect(process.env.MONGO_URL)
+    let response = await xxxModel.find({first_name: "xxx"}).explain("executionStats")
+    console.log(response)
+} */
 
 
 //Instanciando el listener del puerto
