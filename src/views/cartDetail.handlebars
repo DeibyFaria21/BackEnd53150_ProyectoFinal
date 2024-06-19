@@ -1,7 +1,20 @@
-<div id="header">
-    <a href="/api/products" class="cart-text">
-      <h1>PRODUCTOS</h1>
+<div style="display: flex; gap: 50px">
+    <a href="/products" class="cart-text">
+      <h3>PRODUCTOS</h3>
     </a>
+</div>
+<div>
+    {{#if user}}
+        <h2>Hola {{user.first_name}}, este es tu carrito!</h2>
+        <div style="display: flex; gap: 10px">
+            <form action="/profile">
+                <button type="submit">Mi Perfil</button>
+            </form>
+            <form action="/api/sessions/logout" method="POST">
+                <button type="submit">Cerrar Sesión</button>
+            </form>
+        </div>
+    {{/if}}
 </div>
 <div>
     <h1>Productos en el carrito...</h1>

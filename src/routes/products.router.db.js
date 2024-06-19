@@ -18,7 +18,7 @@ const productsRouterdb = Router()
 }) */
 /* res.json(products) */
 
-productsRouterdb.get('/products', async (req, res) => {
+productsRouterdb.get('/', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10;
         const page = parseInt(req.query.page) || 1;
@@ -26,36 +26,40 @@ productsRouterdb.get('/products', async (req, res) => {
         const category = req.query.category || '';
         const sort = req.query.sort || '';
 
-        // Obtener todos los productos
-        let allProducts = await productModel.find().lean();
+        // Construir filtro dinámico
+        const filter = {};
 
-        // Aplicar filtros y ordenamiento
-        let filteredProducts = allProducts;
-
-        // Filtro por nombre (query)
         if (query) {
-            filteredProducts = filteredProducts.filter(product => product.name.toLowerCase().includes(query.toLowerCase()));
+            filter.name = { $regex: query, $options: 'i' }; // Filtrado por nombre (query)
         }
 
-        // Filtro por categoría
         if (category) {
-            filteredProducts = filteredProducts.filter(product => product.category === category);
+            filter.category = category; // Filtrado por categoría
         }
 
-        // Ordenamiento por precio
-        if (sort === 'asc') {
-            filteredProducts.sort((a, b) => a.price - b.price);
-        } else if (sort === 'desc') {
-            filteredProducts.sort((a, b) => b.price - a.price);
+        // Construir opciones de ordenamiento
+        const sortOptions = {};
+        if (sort) {
+            if (sort === 'asc') {
+                sortOptions.price = 1;
+            } else if (sort === 'desc') {
+                sortOptions.price = -1;
+            }
         }
+
+        // Calcular el número total de productos que cumplen los filtros
+        const totalProducts = await productModel.countDocuments(filter);
 
         // Calcular paginación
-        const totalPages = Math.ceil(filteredProducts.length / limit);
-        const startIndex = (page - 1) * limit;
-        const endIndex = Math.min(startIndex + limit, filteredProducts.length);
+        const totalPages = Math.ceil(totalProducts / limit);
+        const skip = (page - 1) * limit;
 
-        // Obtener productos para la página actual
-        const limitedProducts = filteredProducts.slice(startIndex, endIndex);
+        // Obtener productos con filtros y ordenamiento aplicados
+        const products = await productModel.find(filter)
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(limit)
+            .lean();
 
         const buildLink = (pageNum) => {
             let link = `/api/products?page=${pageNum}&limit=${limit}`;
@@ -71,18 +75,22 @@ productsRouterdb.get('/products', async (req, res) => {
         // Construir objeto de respuesta con información de paginación
         const response = {
             status: 'success',
-            payload: limitedProducts,
-            pagination: {
+            payload: products,
+            /* pagination: { */
                 totalPages: totalPages,
                 currentPage: page,
                 hasPrevPage: page > 1,
                 hasNextPage: page < totalPages,
                 prevLink: prevLink,
                 nextLink: nextLink
-            }
+            /* } */
         };
+        
+        /* const user = req.session.user;
 
-        res.render('home', response)
+        res.render('home', { payload: response, user: user }); */
+        
+        res.json(response);
 
     } catch (error) {
         console.error(error);
@@ -90,15 +98,16 @@ productsRouterdb.get('/products', async (req, res) => {
     }
 });
 
+
 //Handlebars
-productsRouterdb.get('/products/:pid', async (req, res) => {
+productsRouterdb.get('/:pid', async (req, res) => {
     try {
         const product = await productModel.findById(req.params.pid).lean()
         if (!product) {
             return res.status(404).json({ error: 'Producto no existe' })
         }
-        res.render('detail', { product })
-        /* res.send(product) */
+        /* res.render('detail', { product }) */
+        res.send(product)
     } catch (error) {
         console.error('Error al encontrar el producto', error)
         res.status(500).render('error', { message: 'Error al encontrar el producto' })
@@ -106,7 +115,7 @@ productsRouterdb.get('/products/:pid', async (req, res) => {
 })
 
 //Postman
-productsRouterdb.post('/products', async (req, res) => {
+productsRouterdb.post('/', async (req, res) => {
     let { title, description, code, price, stock, category, thumbnail} = req.body
     console.log(req.body)
     if (!title || !description || !code || !price || !stock || !category || !thumbnail) {
@@ -148,7 +157,7 @@ productsRouterdb.post('/products', async (req, res) => {
 }) */
 
 //Postman
-productsRouterdb.put('/products/:pid', async (req, res) => {
+productsRouterdb.put('/:pid', async (req, res) => {
     let { pid } = req.params
     let updateProduct = req.body
 
@@ -160,7 +169,7 @@ productsRouterdb.put('/products/:pid', async (req, res) => {
 })
 
 //Handlebars
-/* productsRouterdb.get('/products/update/:pid', async (req, res) => {
+/* productsRouterdb.get('/update/:pid', async (req, res) => {
     try {
         const productById = await productModel.findByIdAndUpdate(req.params.pid).lean()
         res.render('updateProduct', { productById })
@@ -169,7 +178,7 @@ productsRouterdb.put('/products/:pid', async (req, res) => {
     }
 })
 
-productsRouterdb.post('/products/update/:pid', async (req, res) => {
+productsRouterdb.post('/update/:pid', async (req, res) => {
     try {
         let { pid } = req.params
         console.log('Datos recibidos para actualizar:', req.body)
@@ -182,13 +191,13 @@ productsRouterdb.post('/products/update/:pid', async (req, res) => {
 }) */
 
 //Postman
-productsRouterdb.delete('/products/:pid', async (req, res) => {
+productsRouterdb.delete('/:pid', async (req, res) => {
     let { pid } = req.params
     let result = await productModel.deleteOne({ _id: pid })
     res.send({ result: "success", payload: result })
 })
 
-/* productsRouterdb.get('/products/delete/:pid', async (req, res) => {
+/* productsRouterdb.get('/delete/:pid', async (req, res) => {
     try {
         const { pid } = req.params
         await productModel.findByIdAndDelete(pid)

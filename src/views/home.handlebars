@@ -1,14 +1,28 @@
-<div id="header">
-    <a href="/api/carts/664d73c255cc4eb27f46d21c" class="cart-text">
-      <h1>CARRITO</h1>
+<div style="display: flex; gap: 50px">
+    <a href="/carts/664d73c255cc4eb27f46d21c" class="cart-text">
+      <h3>CARRITO</h3>
     </a>
+</div>
+<div>
+    {{#if user}}
+        <h2>Bienvenido, {{user.first_name}} {{user.last_name}}!!</h2>
+        <h4>Actualmente tu role es: {{user.role}}.</h4>
+        <div style="display: flex; gap: 10px">
+            <form action="/profile">
+                <button type="submit">Mi Perfil</button>
+            </form>
+            <form action="/api/sessions/logout" method="POST">
+                <button type="submit">Cerrar Sesión</button>
+            </form>
+        </div>
+    {{/if}}
 </div>
 <div>
     <h1>Listado de productos...</h1>
 </div>
 <div>
     <ul id="products">
-        {{#each payload}}
+        {{#each payload.payload}}
             <br/>
             <li>
                 <strong>Producto ID:</strong> {{this._id}}<br>
@@ -28,7 +42,7 @@
                     <button type="submit">Agregar al carrito</button>
                 </form>
                 <br/>
-                <a href="/api/products/{{this._id}}">Ver detalles</a>
+                <a href="/products/{{this._id}}">Ver detalles</a>
                 <br/>
                 <br/>
                 <hr>
@@ -37,14 +51,14 @@
     </ul>
 </div>
 <div>
-    {{#if pagination.hasPrevPage}}
-        <a href={{pagination.prevLink}}><< Anterior</a>
+    {{#if payload.pagination.hasPrevPage}}
+        <a href={{payload.pagination.prevLink}}><< Anterior</a>
     {{/if}}
     &nbsp;
-    Página {{pagination.currentPage}} de {{pagination.totalPages}}
+    Página {{payload.pagination.currentPage}} de {{payload.pagination.totalPages}}
     &nbsp;
-    {{#if pagination.hasNextPage}}
-    <a href={{pagination.nextLink}}>Siguiente >></a>
+    {{#if payload.pagination.hasNextPage}}
+    <a href={{payload.pagination.nextLink}}>Siguiente >></a>
     {{/if}}
 </div>
 

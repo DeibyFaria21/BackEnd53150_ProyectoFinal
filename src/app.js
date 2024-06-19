@@ -6,6 +6,8 @@ import __dirname from "./utils.js"
 import handlebars from "express-handlebars"
 import { Server } from "socket.io"
 import dotenv from "dotenv"
+import session from "express-session"
+import MongoStore from "connect-mongo"
 import path from "path"
 import methodOverride from 'method-override';
 
@@ -15,6 +17,8 @@ import cartsRouter from "./routes/carts.router.js"
 import productsRouterdb from "./routes/products.router.db.js"
 import cartsRouterdb from "./routes/carts.router.db.js"
 import messagesRouterdb from "./routes/messages.router.db.js"
+import usersRouter from "./routes/users.router.db.js"
+import viewsRouter from "./routes/views.router.db.js"
 
 import productModel from './dao/models/product.model.js'
 import messageModel from "./dao/models/message.model.js"
@@ -36,6 +40,12 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(express.static(__dirname + '/public'))
 
+app.use(session({
+    secret: 'secretkey',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: "mongodb+srv://DeibyFaria21:Simple123@cluster0.fc7im6z.mongodb.net/ecomerce?retryWrites=true&w=majority&appName=Cluster0" }),
+}));
 
 //Middleware que permite usar el metodo DELETE /carts/ID/product/ID...
 //...en un boton dentro del handlebars de cartDetail.
@@ -47,9 +57,11 @@ app.use("/fs/products", productsRouter)
 app.use("/fs/carts", cartsRouter)
 
 //Declaración de endpoints db
-app.use("/api", productsRouterdb)
-app.use("/api", cartsRouterdb)
-app.use("/api", messagesRouterdb)
+app.use("/api/products", productsRouterdb)
+app.use("/api/carts", cartsRouterdb)
+app.use("/api/messages", messagesRouterdb)
+app.use("/api/sessions", usersRouter)
+app.use("/", viewsRouter)
 
 
 dotenv.config()

@@ -5,7 +5,7 @@ import messageModel from '../dao/models/message.model.js'
 const messagesRouterdb = Router()
 
 
-messagesRouterdb.get('/messages', async (req, res) => {
+messagesRouterdb.get('/', async (req, res) => {
     try {
       const messages = await messageModel.find().sort({ timestamp: 1 }).lean();
       res.render('chat', { messages }); // Renderiza la vista 'chat' y pasa los mensajes como datos
@@ -14,7 +14,7 @@ messagesRouterdb.get('/messages', async (req, res) => {
     }
 });
 
-messagesRouterdb.post('/messages', async (req, res) => {
+messagesRouterdb.post('/', async (req, res) => {
   try {
     const { user, message } = req.body;
     const newMessage = new messageModel({ user, message });
